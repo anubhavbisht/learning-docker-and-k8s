@@ -1,0 +1,15 @@
+1. to build image out of docker file
+docker build .(it will create image and give a imageid)
+docker run imageid
+2.Tagging an image
+docker build -t yourDockerId/projectName:version .
+docker build -t anubhavbisht98/redis:latest .
+3. We know we can create container out of image.But duing the image building we cam to know
+that container too can build image out of them
+
+docker commit -c startingCommand containerId(will return a imageid which you can use to make your own container)
+
+docker run -it alpine sh
+apk add --update redis
+docker commit -c 'CMD ["redis-server"]' 6291381e86c7(containerId) ->> this will return imageId
+docker run -it d9d5d01bef5b5aaffe0db79a8b98a7777e5eea13c397fb7e42ca93803ed56793(imageId from above)
