@@ -13,3 +13,5 @@ docker run -it alpine sh
 apk add --update redis
 docker commit -c 'CMD ["redis-server"]' 6291381e86c7(containerId) ->> this will return imageId
 docker run -it d9d5d01bef5b5aaffe0db79a8b98a7777e5eea13c397fb7e42ca93803ed56793(imageId from above)
+
+docker rmi $(docker images -q)
