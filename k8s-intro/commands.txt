@@ -2,3 +2,8 @@
 2. kubectl apply -f <filename>
 3. kubectl get pods
 4. kubectl get services
+5. kubectl get nodes
+6. kubectl describe <object type> <object name>
+7. kubectl delete -f <config-file>
+8. kubectl get deployments
+9. kubectl get pods -o wide
