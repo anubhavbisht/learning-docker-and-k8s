@@ -1,0 +1,4 @@
+1. kubectl cluster-info
+2. kubectl apply -f <filename>
+3. kubectl get pods
+4. kubectl get services
