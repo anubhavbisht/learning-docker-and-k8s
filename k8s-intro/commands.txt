@@ -7,3 +7,10 @@
 7. kubectl delete -f <config-file>
 8. kubectl get deployments
 9. kubectl get pods -o wide
+10. kubectl set image(property) <object type>/<object name> <container-name>=<new image name>
+-> kubectl set image deployment/client-deployment client=anu/clinet:v5
+11. kubectl get storageclass
+12. kubectl get pv
+13. kubectl get pvc
+14. kubectl get secrets
+15. kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asdf
