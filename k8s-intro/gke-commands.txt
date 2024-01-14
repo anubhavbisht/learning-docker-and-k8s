@@ -155,3 +155,110 @@ deploy:
   on:
     branch: master
 *****************************************************************
+cert manager helm
+Add the Jetstack Helm repository
+in your cluster console
+
+helm repo add jetstack https://charts.jetstack.io
+
+Update your local Helm chart repository cache:
+
+helm repo update
+
+Install the cert-manager Helm chart:
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.8.0 \
+  --set installCRDs=true
+Official docs for reference:
+
+https://cert-manager.io/docs/installation/helm/#steps
+
+issuer yaml
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: "test@test.com"
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+
+certificate yaml
+apiVersion: cert-manager.io/v1
+ 
+kind: Certificate
+metadata:
+  name: yourdomain-com-tls
+spec:
+  secretName: yourdomain-com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: yourdomain.com
+  dnsNames:
+    - yourdomain.com
+    - www.yourdomain.com
+
+updated ingress yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  tls:
+    - hosts:
+        - yourdomain.com
+        - www.yourdomain.com
+      secretName: yourdomain-com
+  rules:
+    - host: yourdomain.com
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-cluster-ip-service
+                port:
+                  number: 3000
+          - path: /api/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: server-cluster-ip-service
+                port:
+                  number: 5000
+    - host: www.yourdomain.com
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-cluster-ip-service
+                port:
+                  number: 3000
+          - path: /api/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: server-cluster-ip-service
+                port:
+                  number: 5000
